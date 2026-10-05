@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>赫克力士長戟大兜蟲 · 3D 拆解</title>
+<style>
+:root{--bg1:#e9e4d8;--bg2:#b9b19f;--fg:#1c1a17;--panel:rgba(250,247,240,.82);--acc:#7a3b0c;--on:#1c1a17;--onfg:#f3efe6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#2a2621;--bg2:#0c0a08;--fg:#eee8db;--panel:rgba(28,24,20,.82);--acc:#e8a566;--on:#eee8db;--onfg:#1c1a17}}
+:root[data-theme="dark"]{--bg1:#2a2621;--bg2:#0c0a08;--fg:#eee8db;--panel:rgba(28,24,20,.82);--acc:#e8a566;--on:#eee8db;--onfg:#1c1a17}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(ellipse at 50% 40%,var(--bg1),var(--bg2));color:var(--fg);font:14px/1.4 "Noto Sans TC","PingFang HK","Microsoft JhengHei",system-ui,sans-serif;transition:background-color .4s}
+body.bp{--fg:#e6f2ff;--panel:rgba(6,36,100,.8);--acc:#a8e4ff;--on:#e6f2ff;--onfg:#0a3a94;background:#0b49a8;background-image:linear-gradient(rgba(255,255,255,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.13) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:120px 120px,120px 120px,24px 24px,24px 24px}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;touch-action:none}
+#labels{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.lb{position:absolute;left:0;top:0;white-space:nowrap;font-size:11px;padding:1px 6px;border-radius:3px;background:var(--panel);color:var(--fg);border:1px solid var(--acc);opacity:0}
+#head{position:fixed;left:16px;top:calc(12px + env(safe-area-inset-top,0px));pointer-events:none}
+#head h1{margin:0;font:700 22px/1.2 "Noto Serif TC","Songti TC",serif;letter-spacing:.04em}
+#head p{margin:2px 0 0;font:italic 13px Georgia,serif;opacity:.75}
+#tb{display:none;position:fixed;right:16px;top:calc(12px + env(safe-area-inset-top,0px));border:1.5px solid var(--fg);padding:6px 10px;font-size:11px;line-height:1.5;text-align:left}
+body.bp #tb{display:block}
+#ui{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;padding:8px 10px;background:var(--panel);border:1px solid color-mix(in srgb,var(--fg) 25%,transparent);border-radius:10px;backdrop-filter:blur(8px);max-width:calc(100% - 20px)}
+.seg{display:flex;border:1px solid var(--fg);border-radius:6px;overflow:hidden}
+button{font:inherit;color:var(--fg);background:transparent;border:0;padding:7px 12px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--fg)}
+button.solo{border:1px solid var(--fg);border-radius:6px}
+button.on{background:var(--on);color:var(--onfg)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+label{display:flex;gap:6px;align-items:center}
+input[type=range]{width:110px;accent-color:var(--acc)}
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="labels"></div>
+<div id="head"><h1>赫克力士長戟大兜蟲</h1><p>Dynastes hercules, male</p></div>
+<div id="tb"><b>DYNASTES HERCULES</b><br>赫克力士長戟大兜蟲<br>SCALE 1:1 · SHEET 1/1</div>
+<div id="ui">
+  <div class="seg"><button id="bA" class="on">Assembled</button><button id="bE">Exploded</button></div>
+  <label>分解度<input type="range" id="sl" min="0" max="1" step="0.01" value="0"></label>
+  <button id="bF" class="solo">飛行 Fly</button>
+  <button id="bB" class="solo">藍圖 Blueprint</button>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.setClearColor(0x000000,0);
+$('stage').appendChild(renderer.domElement);
+const scene=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(42,1,.1,200);
+cam.position.set(8,5.5,15);
+if(innerWidth<innerHeight)cam.position.multiplyScalar(1.6);
+const ctl=new THREE.OrbitControls(cam,renderer.domElement);
+ctl.enableDamping=true;ctl.minDistance=5;ctl.maxDistance=45;ctl.autoRotate=true;ctl.autoRotateSpeed=.7;
+ctl.addEventListener('start',()=>ctl.autoRotate=false);
+scene.add(new THREE.HemisphereLight(0xffffff,0x554433,.95));
+const dl=new THREE.DirectionalLight(0xffffff,1.1);dl.position.set(5,10,7);scene.add(dl);
+const rl=new THREE.DirectionalLight(0xffcc99,.6);rl.position.set(-6,3,-8);scene.add(rl);
+const grid=new THREE.GridHelper(36,36,0x888888,0x888888);
+grid.position.y=-2.6;grid.material.transparent=true;grid.material.opacity=.22;scene.add(grid);
+const rig=new THREE.Group();rig.rotation.order='YXZ';scene.add(rig);
+const bug=new THREE.Group();bug.position.z=-1.2;rig.add(bug);
+
+/* materials */
+const M=(c,r,m)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m,side:THREE.DoubleSide});
+const black=M(0x17110d,.26,.35),brown=M(0x2b170c,.4,.2);
+const wingMat=new THREE.MeshStandardMaterial({color:0x6b4423,roughness:.5,transparent:true,opacity:.6,side:THREE.DoubleSide});
+function elyTex(){const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,0,256);g.addColorStop(0,'#a8a434');g.addColorStop(1,'#6a661a');
+  x.fillStyle=g;x.fillRect(0,0,256,256);x.fillStyle='#120e08';
+  for(let i=0;i<24;i++){x.beginPath();x.ellipse(Math.random()*256,25+Math.random()*210,6+Math.random()*14,5+Math.random()*10,Math.random()*3,0,7);x.fill()}
+  const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;return t}
+const ely=new THREE.MeshStandardMaterial({map:elyTex(),roughness:.3,metalness:.15,side:THREE.DoubleSide});
+
+/* helpers */
+const parts=[];
+function part(name,g,dir,pos,kind,s){g.position.set(...(pos||[0,0,0]));
+  g.userData={name,dir:new THREE.Vector3(...dir),base:g.position.clone(),kind,s,ph:Math.random()*6};
+  bug.add(g);parts.push(g);return g}
+const ell=(x,y,z,s,m)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(1,32,20),m);o.scale.set(...s);o.position.set(x,y,z);return o};
+function tube(P,r0,r1,m,seg=48,rad=14){
+  const c=new THREE.CatmullRomCurve3(P.map(p=>new THREE.Vector3(...p))),F=c.computeFrenetFrames(seg,false),pos=[],idx=[];
+  for(let i=0;i<=seg;i++){const t=i/seg,p=c.getPointAt(t),n=F.normals[i],b=F.binormals[i];
+    const r=(r0+(r1-r0)*t)*(t>.93?Math.sqrt((1-t)/.07):1);
+    for(let j=0;j<=rad;j++){const a=j/rad*6.2832,cs=Math.cos(a),sn=Math.sin(a);
+      pos.push(p.x+(n.x*cs+b.x*sn)*r,p.y+(n.y*cs+b.y*sn)*r,p.z+(n.z*cs+b.z*sn)*r)}}
+  for(let i=0;i<seg;i++)for(let j=0;j<rad;j++){const a=i*(rad+1)+j,b=a+rad+1;idx.push(a,b,a+1,b,b+1,a+1)}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.setIndex(idx);g.computeVertexNormals();return{mesh:new THREE.Mesh(g,m),c}}
+function tooth(g,c,t,dy,up){const p=c.getPointAt(t),k=new THREE.Mesh(new THREE.ConeGeometry(.07,.3,8),black);
+  k.position.set(0,p.y+dy,p.z);if(!up)k.rotation.x=Math.PI;g.add(k)}
+function seg(a,b,r,m){const A=new THREE.Vector3(...a),B=new THREE.Vector3(...b);
+  const c=new THREE.Mesh(new THREE.CylinderGeometry(r*.8,r,A.distanceTo(B),10),m);
+  c.position.copy(A).add(B).multiplyScalar(.5);
+  c.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),B.clone().sub(A).normalize());return c}
+
+/* head + eyes */
+let g=new THREE.Group();
+g.add(ell(0,.05,2.05,[.5,.35,.54],black),ell(-.4,.16,2.2,[.1,.1,.1],brown),ell(.4,.16,2.2,[.1,.1,.1],brown),ell(0,-.05,2.5,[.22,.13,.16],black));
+part('頭部 Head',g,[0,.1,1.6]);
+/* pronotum */
+g=new THREE.Group();g.add(ell(0,.15,1.2,[.84,.58,.86],black));
+part('前胸背板 Pronotum',g,[0,1.8,.4]);
+/* thoracic horn */
+let h=tube([[0,.45,1.3],[0,1.0,2.3],[0,1.35,3.5],[0,1.0,4.7]],.3,.06,black);
+g=new THREE.Group();g.add(h.mesh);tooth(g,h.c,.42,-.3,0);tooth(g,h.c,.66,-.22,0);
+part('胸角 Thoracic horn',g,[0,2.4,1.4]);
+/* cephalic horn */
+h=tube([[0,.05,2.2],[0,0,3.2],[0,.25,4.0],[0,.7,4.55]],.2,.04,black);
+g=new THREE.Group();g.add(h.mesh);tooth(g,h.c,.5,.2,1);tooth(g,h.c,.72,.14,1);
+part('頭角 Cephalic horn',g,[0,-1.2,2.4]);
+/* abdomen */
+g=new THREE.Group();g.add(ell(0,-.05,-1.0,[.64,.5,1.45],brown));
+part('腹部 Abdomen',g,[0,-1.5,-1.3]);
+/* elytra + hindwings */
+function elytron(s){const geo=new THREE.SphereGeometry(1,28,18,0,Math.PI,0,1.75);
+  geo.rotateY(s*Math.PI/2);geo.scale(.8,.7,1.45);geo.translate(0,0,-1.45);
+  const m=new THREE.Mesh(geo,ely),gr=new THREE.Group();gr.add(m);
+  return part(s>0?'右鞘翅 Elytron R':'左鞘翅 Elytron L',gr,[s*3.4,2.2,-1.4],[s*.04,.12,.5],'ely',s)}
+function wing(s){const m=new THREE.Mesh(new THREE.CircleGeometry(1,28),wingMat);
+  m.scale.set(1.3,.55,1);m.rotation.x=-Math.PI/2;m.position.x=s*1.3;
+  const v=[];[-.5,-.25,0,.25,.5].forEach(k=>v.push(-1,0,0,.8,k*.8,0));
+  const vg=new THREE.BufferGeometry();vg.setAttribute('position',new THREE.Float32BufferAttribute(v,3));
+  m.add(new THREE.LineSegments(vg,new THREE.LineBasicMaterial({color:0x2e1b0c})));
+  const gr=new THREE.Group();gr.add(m);
+  return part(s>0?'右後翅 Hindwing R':'左後翅 Hindwing L',gr,[s*3.2,-.5,-2],[s*.35,.3+(s>0?0:.03),.45],'wing',s)}
+[1,-1].forEach(s=>{elytron(s);wing(s)});
+/* legs */
+function leg(name,s,z,zf,dir){const gr=new THREE.Group(),P=[[0,0,0],[.75,.15,.25*zf],[1.3,-.7,.6*zf],[1.65,-1.45,.7*zf],[1.8,-1.8,.8*zf]];
+  for(let i=0;i<4;i++){gr.add(seg(P[i],P[i+1],i==0?.17:i==1?.13:.07,black));if(i<3)gr.add(ell(...P[i+1],[.13,.13,.13],black))}
+  gr.scale.x=s;return part(name,gr,[s*dir[0],dir[1],dir[2]],[s*.58,-.2-(z<0?.1:0),z],'leg')}
+[1,-1].forEach(s=>{const S=s>0?'右':'左';
+  leg(S+'前足 Foreleg',s,1.45,1.3,[2.5,-1.4,1.8]);leg(S+'中足 Midleg',s,.4,0,[3,-1.5,0]);leg(S+'後足 Hindleg',s,-.7,-1.4,[2.6,-1.5,-1.8])});
+/* antennae */
+[1,-1].forEach(s=>{const gr=new THREE.Group();gr.add(seg([0,0,0],[.2,.15,.45],.035,black));
+  for(let i=0;i<3;i++)gr.add(ell(.24+i*.02,.2,.5+i*.07,[.1,.03,.1],brown));
+  part((s>0?'右':'左')+'觸角 Antenna',gr,[s*1.3,1.3,1.8],[s*.2,.15,2.5],'ant',s);gr.scale.x=s});
+
+/* labels (anchor = part's bbox centre in its own frame) */
+const lab=$('labels');scene.updateMatrixWorld(true);
+parts.forEach(p=>{const bx=new THREE.Box3().setFromObject(p),c=new THREE.Vector3();bx.getCenter(c);
+  p.userData.c=p.worldToLocal(c);const d=document.createElement('div');d.className='lb';d.textContent=p.userData.name;lab.appendChild(d);p.userData.el=d});
+
+/* blueprint */
+const fillM=new THREE.MeshBasicMaterial({color:0x1f64d8,transparent:true,opacity:.3,side:THREE.DoubleSide,depthWrite:false});
+const lineM=new THREE.LineBasicMaterial({color:0xd4ecff});
+const meshes=[];bug.traverse(o=>{if(o.isMesh)meshes.push(o)});
+meshes.forEach(o=>{o.userData.mat=o.material;const l=new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry,1),lineM);l.visible=false;o.userData.edge=l;o.add(l)});
+let bp=false;
+function setBP(on){bp=on;meshes.forEach(o=>{o.material=on?fillM:o.userData.mat;o.userData.edge.visible=on});
+  document.body.classList.toggle('bp',on);$('bB').classList.toggle('on',on);grid.material.opacity=on?.5:.22}
+
+/* state + UI */
+let ex=0,exT=0,fy=0,fyT=0,ang=0,yaw=0,t=0;
+function setEx(v){exT=v;$('sl').value=v;$('bA').classList.toggle('on',v<.5);$('bE').classList.toggle('on',v>=.5);if(v>0)setFly(false)}
+function setFly(on){if(on&&!fyT){ang=yaw-Math.PI;exT=0;$('sl').value=0;$('bA').classList.add('on');$('bE').classList.remove('on')}
+  fyT=on?1:0;$('bF').classList.toggle('on',on)}
+$('bA').onclick=()=>setEx(0);$('bE').onclick=()=>setEx(1);
+$('sl').oninput=e=>setEx(+e.target.value);
+$('bF').onclick=()=>setFly(!fyT);$('bB').onclick=()=>setBP(!bp);
+const ss=x=>x*x*(3-2*x);
+const clock=new THREE.Clock(),v3=new THREE.Vector3();
+function resize(){renderer.setSize(innerWidth,innerHeight);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}
+addEventListener('resize',resize);resize();
+
+function frame(){requestAnimationFrame(frame);
+  const dt=Math.min(clock.getDelta(),.05);t+=dt;
+  ex+=(exT-ex)*(1-Math.exp(-dt*4));fy+=(fyT-fy)*(1-Math.exp(-dt*3));
+  const es=ss(ex),fs=ss(fy),open=Math.max(fs,es*.85);
+  parts.forEach(p=>{const u=p.userData;p.position.copy(u.base).addScaledVector(u.dir,es);
+    if(u.kind=='ely'){p.rotation.y=-u.s*.75*open;p.rotation.z=u.s*(.5*open+.04*fs*Math.sin(t*40))}
+    else if(u.kind=='wing'){p.rotation.y=u.s*(Math.PI/2+(.35-Math.PI/2)*open);
+      p.rotation.z=u.s*(.12*open+.7*fs*Math.sin(t*30))}
+    else if(u.kind=='leg')p.rotation.x=(.55+.14*Math.sin(t*9+u.ph))*fs;
+    else if(u.kind=='ant')p.rotation.x=.12*Math.sin(t*5+u.ph)*(1-es*.5)+.3*fs});
+  /* flight path */
+  if(fyT){ang+=dt*.8;yaw=ang+Math.PI}else{yaw+=(Math.round(yaw/6.2832)*6.2832-yaw)*(1-Math.exp(-dt*3))}
+  rig.position.set(Math.cos(ang)*4*fs,fs*(.9+.35*Math.sin(t*2.4)),-Math.sin(ang)*4*fs);
+  rig.rotation.set(-.22*fs+.04*fs*Math.sin(t*4.8),yaw,-.3*fs);
+  /* labels */
+  parts.forEach(p=>{const u=p.userData;v3.copy(u.c);p.localToWorld(v3);v3.project(cam);
+    u.el.style.transform=`translate(${(v3.x*.5+.5)*innerWidth}px,${(-v3.y*.5+.5)*innerHeight}px) translate(-50%,-130%)`;
+    u.el.style.opacity=fy>.05?0:(bp?1:Math.max(0,(es-.35)/.65))});
+  ctl.update();renderer.render(scene,cam)}
+frame();
+</script>
+</body>
+</html>
